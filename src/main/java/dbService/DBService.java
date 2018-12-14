@@ -33,7 +33,7 @@ public class DBService {
         }
     }
 
-    public Set<String> getArtists(String substr) {
+    public Set<String> getArtists(String artistSubstr) {
         final CSVReader reader = executor.getReader();
 
         Set<String> artists = new HashSet<>();
@@ -41,10 +41,25 @@ public class DBService {
 
             try {
                 while ((nextLine = reader.readNext()) != null) {
-                    if(nextLine[0].contains(substr)) artists.add(nextLine[0]);
+                    if(nextLine[0].contains(artistSubstr)) artists.add(nextLine[0]);
                 }
             } catch (IOException ignore) {}
 
         return artists;
+    }
+
+    public Set<String> getSongs(String songSubstr) {
+        final CSVReader reader = executor.getReader();
+
+        Set<String> songs = new HashSet<>();
+        String[] nextLine;
+
+        try {
+            while ((nextLine = reader.readNext()) != null) {
+                if(nextLine[1].contains(songSubstr)) songs.add(nextLine[1]);
+            }
+        } catch (IOException ignore) {}
+
+        return songs;
     }
 }

@@ -24,19 +24,34 @@ public class ArgsHandler implements Runnable {
             arity = "0..1",
             paramLabel = "NAME",
             description = "List of all artists or artists with \"NAME\" in the title.")
-    private String substr;
+    private String artistSubstr;
+
+    @CommandLine.Option(names = "--list_songs",
+            arity = "0..1",
+            paramLabel = "NAME",
+            description = "List of all songs or songs with \"NAME\" in the title.")
+    private String songSubstr;
 
     public void run() {
         if(about) System.out.println("Lyrics analysis.\n" +
                 "Author: Tsema G.S. 2018. In the course of \"Software Engineering\".\n" +
                 "Saint-Petersburg Electrotechnical University ETU \"LETI\".");
 
-        if(substr != null) {
+        if(artistSubstr != null) {
             DBService dbService = new DBService(filename);
-            Set<String> artists = dbService.getArtists(substr);
+            Set<String> artists = dbService.getArtists(artistSubstr);
 
             for(String artist : artists) {
                 System.out.println(artist);
+            }
+        }
+
+        if(songSubstr != null) {
+            DBService dbService = new DBService(filename);
+            Set<String> songs = dbService.getSongs(songSubstr);
+
+            for(String song : songs) {
+                System.out.println(song);
             }
         }
     }
