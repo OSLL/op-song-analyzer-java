@@ -11,7 +11,6 @@ import java.util.Set;
         version = "Lyrics Analyzer 1.0")
 
 public class ArgsHandler implements Runnable {
-
     @CommandLine.Option(names = "-about") private boolean about = false;
 
     @CommandLine.Option(names = "--file",
@@ -32,6 +31,10 @@ public class ArgsHandler implements Runnable {
             description = "List of all songs or songs with \"NAME\" in the title.")
     private String songSubstr;
 
+    static final int ARTIST = 0;
+    static final int SONG = 1;
+    static final int LYRICS = 3;
+
     public void run() {
         if(about) System.out.println("Lyrics analysis.\n" +
                 "Author: Tsema G.S. 2018. In the course of \"Software Engineering\".\n" +
@@ -39,7 +42,7 @@ public class ArgsHandler implements Runnable {
 
         if(artistSubstr != null) {
             DBService dbService = new DBService(filename);
-            Set<String> artists = dbService.getArtists(artistSubstr);
+            Set<String> artists = dbService.get(new TypedStr(ARTIST, artistSubstr));
 
             for(String artist : artists) {
                 System.out.println(artist);
@@ -48,7 +51,7 @@ public class ArgsHandler implements Runnable {
 
         if(songSubstr != null) {
             DBService dbService = new DBService(filename);
-            Set<String> songs = dbService.getSongs(songSubstr);
+            Set<String> songs = dbService.get(new TypedStr(SONG, songSubstr));
 
             for(String song : songs) {
                 System.out.println(song);

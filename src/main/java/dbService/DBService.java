@@ -1,5 +1,6 @@
 package dbService;
 
+import cmd.TypedStr;
 import com.opencsv.CSVReader;
 
 import java.io.File;
@@ -33,7 +34,7 @@ public class DBService {
         }
     }
 
-    public Set<String> getArtists(String artistSubstr) {
+    public Set<String> get(TypedStr typedStr) {
         final CSVReader reader = executor.getReader();
 
         Set<String> artists = new HashSet<>();
@@ -41,25 +42,10 @@ public class DBService {
 
             try {
                 while ((nextLine = reader.readNext()) != null) {
-                    if(nextLine[0].contains(artistSubstr)) artists.add(nextLine[0]);
+                    if(nextLine[typedStr.getType()].contains(typedStr.getSubstr())) artists.add(nextLine[typedStr.getType()]);
                 }
             } catch (IOException ignore) {}
 
         return artists;
-    }
-
-    public Set<String> getSongs(String songSubstr) {
-        final CSVReader reader = executor.getReader();
-
-        Set<String> songs = new HashSet<>();
-        String[] nextLine;
-
-        try {
-            while ((nextLine = reader.readNext()) != null) {
-                if(nextLine[1].contains(songSubstr)) songs.add(nextLine[1]);
-            }
-        } catch (IOException ignore) {}
-
-        return songs;
     }
 }
