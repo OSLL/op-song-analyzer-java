@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
-public class Executor {
+public class Executor  {
 
     private File dbFile;
     private CSVReader reader;
@@ -18,7 +18,7 @@ public class Executor {
         this.dbFile = dbFile;
     }
 
-    CSVReader getReader() {
+    CSVReader getReader() throws FileNotFoundException {
 
         final CSVParser parser = new CSVParserBuilder()
                 .withSeparator(',')
@@ -26,13 +26,9 @@ public class Executor {
                 .withQuoteChar('"')
                 .build();
 
-        try {
-            reader = new CSVReaderBuilder(new FileReader(dbFile.getAbsolutePath()))
-                    .withCSVParser(parser)
-                    .withSkipLines(1)
-                    .build();
-        } catch (FileNotFoundException ignore) {}
-
-        return reader;
+        return reader = new CSVReaderBuilder(new FileReader(dbFile.getAbsolutePath()))
+                .withCSVParser(parser)
+                .withSkipLines(1)
+                .build();
     }
 }

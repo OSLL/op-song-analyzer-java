@@ -3,6 +3,8 @@ package cmd;
 import dbService.DBService;
 
 import picocli.CommandLine;
+
+import java.util.List;
 import java.util.Set;
 
 @CommandLine.Command(description = "Lyrics analysis",
@@ -42,7 +44,7 @@ public class ArgsHandler implements Runnable {
 
         if(artistSubstr != null) {
             DBService dbService = new DBService(filename);
-            Set<String> artists = dbService.get(new TypedStr(ARTIST, artistSubstr));
+            List<String> artists = dbService.get(new TypedStr(ARTIST, artistSubstr));
 
             for(String artist : artists) {
                 System.out.println(artist);
@@ -51,7 +53,7 @@ public class ArgsHandler implements Runnable {
 
         if(songSubstr != null) {
             DBService dbService = new DBService(filename);
-            Set<String> songs = dbService.get(new TypedStr(SONG, songSubstr));
+            List<String> songs = dbService.get(new TypedStr(SONG, songSubstr));
 
             for(String song : songs) {
                 System.out.println(song);
