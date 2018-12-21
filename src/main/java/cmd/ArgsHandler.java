@@ -58,20 +58,18 @@ public class ArgsHandler implements Runnable {
             DBService dbService = new DBService(filename);
             Map<String,Integer> artists = dbService.getNames(new TypedStr(ARTIST, artistSubstr));
 
-            new ArrayList(artists.keySet())
-                    .stream()
-                    .sorted(Comparator.comparing(o -> o.toString().toLowerCase()))
-                    .forEach(System.out::println);
+            artists.keySet().stream()
+                            .sorted(Comparator.comparing(String::toLowerCase))
+                            .forEach(System.out::println);
         }
 
         if(songSubstr != null) {                                                           // --list_songs
             DBService dbService = new DBService(filename);
             Map<String, Integer> songs = dbService.getNames(new TypedStr(SONG, songSubstr));
 
-            new ArrayList(songs.keySet())
-                    .stream()
-                    .sorted(Comparator.comparing(o -> o.toString().toLowerCase()))
-                    .forEach(System.out::println);
+            songs.keySet().stream()
+                          .sorted(Comparator.comparing(String::toLowerCase))
+                          .forEach(System.out::println);
 
         }
 
@@ -94,7 +92,8 @@ public class ArgsHandler implements Runnable {
         }
 
         if(artistWordRating) {
-            System.out.println("arrrr");
+            DBService dbService = new DBService(filename);
+            Map<String, Integer> words = dbService.getArtistWordsRating();
         }
     }
 }

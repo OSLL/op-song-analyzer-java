@@ -1,11 +1,11 @@
 package dbService;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 import com.opencsv.CSVReader;
 
@@ -160,5 +160,63 @@ public class DBService {
         }
 
         return data;
+    }
+
+    public Map<String, Integer> getArtistWordsRating() {
+        CSVReader reader = null;
+
+        try {
+            reader = executor.getReader();
+        } catch (FileNotFoundException e) {
+            System.out.println("File " + dbFile.getName() + " does not exist.");
+            System.exit(1);
+        }
+
+        Map<String, HashSet<String>> data = new HashMap<>();                        // Результат
+        PorterStemmer stemmer = new PorterStemmer();
+        String[] nextLine;                                                          // Для перебора строк бд
+
+        try {
+
+            int count = 0;
+            while ((nextLine = reader.readNext()) != null) {
+
+//                Set<String> set = new HashSet<String>();
+//
+//                String[] words = nextLine[LYRICS].toLowerCase()
+//                                                 .trim()
+//                                                 .replaceAll("[^a-zA-Z ]", "")
+//                                                 .split(" {1,}");
+//
+//                for(String word : words) {
+//                    set.add(word);
+//                }
+
+                System.out.println(nextLine[LYRICS].toLowerCase()
+                                                   .trim()
+                                                   .replaceAll("[^a-zA-Z ]", "")
+                                                   .split(" {1,}").length);
+
+                System.out.println(Arrays.stream(nextLine[LYRICS].toLowerCase()
+                                              .trim()
+                                              .replaceAll("[^a-zA-Z ]", "")
+                                              .split(" {1,}"))
+                                              .collect(Collectors.toCollection(HashSet::new)).size());
+
+
+//                if(!data.containsKey(nextLine[ARTIST])) {
+//                    data.put(nextLine[ARTIST], )
+//                }
+
+                if (count == 0) System.exit(0);
+            }
+
+        } catch (IOException | ArrayIndexOutOfBoundsException e) {
+            System.out.print((char)27 + "[89m" + "\n");
+            System.out.println("Unable to read database file.");
+            System.exit(1);
+        }
+
+        return null;
     }
 }
