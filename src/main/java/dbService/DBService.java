@@ -63,7 +63,7 @@ public class DBService {
             System.exit(1);
         }
 
-        Map<String, Integer> data = new HashMap<>();                                // Результат
+        Map<String, Integer> data = new HashMap<>();
         String[] nextLine;
 
         try {
@@ -105,7 +105,7 @@ public class DBService {
         return data;
     }
 
-    public Map<String, Integer> getWords(TypedStr typedStr) {
+    public Map<String, Integer> getUniqWords(TypedStr typedStr) {
         CSVReader reader = null;
 
         try {
@@ -115,9 +115,9 @@ public class DBService {
             System.exit(1);
         }
 
-        Map<String, Integer> data = new HashMap<>();                                // Результат
+        Map<String, Integer> data = new HashMap<>();
         PorterStemmer stemmer = new PorterStemmer();
-        String[] nextLine;                                                          // Для перебора строк бд
+        String[] nextLine;
 
         try {
             int count = 0;
@@ -162,7 +162,7 @@ public class DBService {
         return data;
     }
 
-    public Map<String, Integer> getArtistWordsRating() {
+    public Map<String, Set<String>> getArtistsUniqueWords() {
         CSVReader reader = null;
 
         try {
@@ -172,43 +172,51 @@ public class DBService {
             System.exit(1);
         }
 
-        Map<String, HashSet<String>> data = new HashMap<>();                        // Результат
+        Map<String, Set<String>> data = new HashMap<>();
         PorterStemmer stemmer = new PorterStemmer();
-        String[] nextLine;                                                          // Для перебора строк бд
+        String[] nextLine;
 
         try {
 
             int count = 0;
             while ((nextLine = reader.readNext()) != null) {
 
-//                Set<String> set = new HashSet<String>();
-//
-//                String[] words = nextLine[LYRICS].toLowerCase()
-//                                                 .trim()
-//                                                 .replaceAll("[^a-zA-Z ]", "")
-//                                                 .split(" {1,}");
-//
-//                for(String word : words) {
-//                    set.add(word);
-//                }
+                count = printStatus(count);                                         // Желтая строка
 
-                System.out.println(nextLine[LYRICS].toLowerCase()
-                                                   .trim()
-                                                   .replaceAll("[^a-zA-Z ]", "")
-                                                   .split(" {1,}").length);
+                if(data.containsKey(nextLine[ARTIST])) {
+                    Set<String> uniqueWords = data.get(nextLine[ARTIST]);
+                    String[] words = nextLine[LYRICS].toLowerCase()
+                            .trim()
+                            .replaceAll("[^a-zA-Z ]", "")
+                            .split(" {1,}");
 
-                System.out.println(Arrays.stream(nextLine[LYRICS].toLowerCase()
-                                              .trim()
-                                              .replaceAll("[^a-zA-Z ]", "")
-                                              .split(" {1,}"))
-                                              .collect(Collectors.toCollection(HashSet::new)).size());
+                    for(String word : words) {
+                        uniqueWords.add(stemmer.getStem(word));
+                    }
 
+                    data.put(nextLine[ARTIST], uniqueWords);
 
-//                if(!data.containsKey(nextLine[ARTIST])) {
-//                    data.put(nextLine[ARTIST], )
-//                }
+                } else {
 
-                if (count == 0) System.exit(0);
+                    Set<String> uniqueWords = new HashSet<>();
+                    String[] words = nextLine[LYRICS].toLowerCase()
+                                                     .trim()
+                                                     .replaceAll("[^a-zA-Z ]", "")
+                                                     .split(" {1,}");
+
+                    for(String word : words) {
+                        uniqueWords.add(stemmer.getStem(word));
+                    }
+
+                    data.put(nextLine[ARTIST], uniqueWords);
+                }
+            }
+
+            System.out.print((char)27 + "[89m" + "\n");
+
+            if(data.isEmpty()) {
+                System.out.println("Artists and songs not found.");
+                System.exit(1);
             }
 
         } catch (IOException | ArrayIndexOutOfBoundsException e) {
@@ -217,6 +225,6 @@ public class DBService {
             System.exit(1);
         }
 
-        return null;
+        return data;
     }
 }

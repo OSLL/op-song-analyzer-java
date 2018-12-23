@@ -4,6 +4,7 @@ import dbService.DBService;
 import picocli.CommandLine;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @CommandLine.Command(description = "Lyrics analysis",
         name = "LyricsAnalyzer",
@@ -75,7 +76,7 @@ public class ArgsHandler implements Runnable {
 
         if(artistName != null) {                                                           // --artist_uniq_words
             DBService dbService = new DBService(filename);
-            Map<String, Integer> words = dbService.getWords(new TypedStr(ARTIST, artistName));
+            Map<String, Integer> words = dbService.getUniqWords(new TypedStr(ARTIST, artistName));
 
             words.entrySet().stream()
                             .sorted(Comparator.comparing(Map.Entry<String, Integer>::getValue).reversed())
@@ -84,16 +85,23 @@ public class ArgsHandler implements Runnable {
 
         if(songName != null) {                                                             // --song_uniq_words
             DBService dbService = new DBService(filename);
-            Map<String, Integer> words = dbService.getWords(new TypedStr(SONG, songName));
+            Map<String, Integer> words = dbService.getUniqWords(new TypedStr(SONG, songName));
 
             words.entrySet().stream()
                             .sorted(Comparator.comparing(Map.Entry<String, Integer>::getValue).reversed())
                             .forEach(x -> System.out.println(x.getKey()));
         }
 
-        if(artistWordRating) {
+        if(artistWordRating) {                                                             // --artist_word_rating
             DBService dbService = new DBService(filename);
-            Map<String, Integer> words = dbService.getArtistWordsRating();
+            Map<String, Set<String>> words = dbService.getArtistsUniqueWords();
+
+            words.entrySet().stream()
+                            .collect(Collectors.toMap(Map.Entry::getKey,
+                                                      entry -> entry.getValue().size()))
+                            .entrySet().stream()
+                            .sorted(Comparator.comparing(Map.Entry<String, Integer>::getValue).reversed())
+                            .forEach(entry -> System.out.println(entry.getKey()));
         }
     }
 }
