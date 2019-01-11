@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 import com.opencsv.CSVReader;
 
 import cmd.TypedStr;
+import me.tongfei.progressbar.ProgressBar;
+import me.tongfei.progressbar.ProgressBarStyle;
 import stemmer.PorterStemmer;
 
 import static cmd.ArgsHandler.ARTIST;
@@ -42,17 +44,6 @@ public class DBService {
         }
     }
 
-    private int printStatus(int i) {                                                // Вывод строки состояния
-        int count = i;
-
-        System.out.print('\r');
-        System.out.print((char)27 + "[4m" +
-                (char)27 + "[92m" +
-                ++count + " entries are read!");
-
-        return count;
-    }
-
     public Map<String, Integer> getNames(TypedStr typedStr) {
         CSVReader reader = null;
 
@@ -66,11 +57,11 @@ public class DBService {
         Map<String, Integer> data = new HashMap<>();
         String[] nextLine;
 
-        try {
+        try(ProgressBar pb = new ProgressBar("Progress", 57650, ProgressBarStyle.ASCII)) {
             int count = 0;
             while ((nextLine = reader.readNext()) != null) {
 
-                count = printStatus(count);                                         // Желтая строка
+                pb.step();
 
                 if(nextLine[typedStr.getType()].toLowerCase().contains(typedStr.getSubstr().toLowerCase())) {
                     if(!data.containsKey(nextLine[typedStr.getType()])) {
@@ -81,7 +72,6 @@ public class DBService {
                     }
                 }
             }
-            System.out.print((char)27 + "[89m" + "\n");
 
             if(data.isEmpty()) {
                 switch (typedStr.getType()) {
@@ -97,7 +87,6 @@ public class DBService {
             }
 
         } catch (IOException | ArrayIndexOutOfBoundsException e) {
-            System.out.print((char)27 + "[89m" + "\n");
             System.out.println("Unable to read database file.");
             System.exit(1);
         }
@@ -119,11 +108,11 @@ public class DBService {
         PorterStemmer stemmer = new PorterStemmer();
         String[] nextLine;
 
-        try {
+        try(ProgressBar pb = new ProgressBar("Progress", 57650, ProgressBarStyle.ASCII)) {
             int count = 0;
             while ((nextLine = reader.readNext()) != null) {
 
-                count = printStatus(count);                                         // Желтая строка
+                pb.step();
 
                 if(nextLine[typedStr.getType()].equals(typedStr.getSubstr())) {
                     String[] words = nextLine[LYRICS].toLowerCase()
@@ -138,7 +127,8 @@ public class DBService {
                 }
 
             }
-            System.out.print((char)27 + "[89m" + "\n");
+
+            System.out.print('\r');
 
             if(data.isEmpty()) {
                 switch (typedStr.getType()) {
@@ -154,7 +144,6 @@ public class DBService {
             }
 
         } catch (IOException | ArrayIndexOutOfBoundsException e) {
-            System.out.print((char)27 + "[89m" + "\n");
             System.out.println("Unable to read database file.");
             System.exit(1);
         }
@@ -176,12 +165,12 @@ public class DBService {
         PorterStemmer stemmer = new PorterStemmer();
         String[] nextLine;
 
-        try {
+        try(ProgressBar pb = new ProgressBar("Progress", 57650, ProgressBarStyle.ASCII)) {
 
             int count = 0;
             while ((nextLine = reader.readNext()) != null) {
 
-                count = printStatus(count);                                         // Желтая строка
+                pb.step();
 
                 if(data.containsKey(nextLine[ARTIST])) {
                     Set<String> uniqueWords = data.get(nextLine[ARTIST]);
@@ -212,15 +201,12 @@ public class DBService {
                 }
             }
 
-            System.out.print((char)27 + "[89m" + "\n");
-
             if(data.isEmpty()) {
                 System.out.println("Artists and songs not found.");
                 System.exit(1);
             }
 
         } catch (IOException | ArrayIndexOutOfBoundsException e) {
-            System.out.print((char)27 + "[89m" + "\n");
             System.out.println("Unable to read database file.");
             System.exit(1);
         }
