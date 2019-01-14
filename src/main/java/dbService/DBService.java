@@ -1,11 +1,14 @@
 package dbService;
 
 import java.io.File;
-import java.util.*;
+
+import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.stream.Collectors;
 
 import com.opencsv.CSVReader;
 
@@ -170,7 +173,7 @@ public class DBService {
             int count = 0;
             while ((nextLine = reader.readNext()) != null) {
 
-                pb.step();
+                pb.step();                                                             // progressBar step++
 
                 if(data.containsKey(nextLine[ARTIST])) {
                     Set<String> uniqueWords = data.get(nextLine[ARTIST]);

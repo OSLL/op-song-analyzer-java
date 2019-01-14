@@ -42,9 +42,15 @@ public class ArgsHandler implements Runnable {
             description = "The unique words list of the song with the name \"NAME\".")
     private String songName = null;
 
-    @CommandLine.Option(names = "--artist_word_rating",
+    @CommandLine.Option(names = "--artist_word_rating",                                    // --artist_word_rating
     description = "List of all artists in descending order of the number unique words in their songs.")
-    private boolean artistWordRating = false;                                              // --artist_word_rating
+    private boolean artistWordRating = false;
+
+    @CommandLine.Option(names = "--similar_artists",                                       // --similar_artists
+    paramLabel = "NAME",
+    description = "List of artists than the vocabulary intersects with the vocabulary of the artist" +
+                  "with the name \"NAME\".")
+    private String similarArtistName = null;
 
     public static final int ARTIST = 0;
     public static final int SONG = 1;
@@ -94,14 +100,28 @@ public class ArgsHandler implements Runnable {
 
         if(artistWordRating) {                                                             // --artist_word_rating
             DBService dbService = new DBService(filename);
-            Map<String, Set<String>> words = dbService.getArtistsUniqueWords();
+            Map<String, Set<String>> artistsUWords = dbService.getArtistsUniqueWords();
 
-            words.entrySet().stream()
-                            .collect(Collectors.toMap(Map.Entry::getKey,
-                                                      entry -> entry.getValue().size()))
-                            .entrySet().stream()
-                            .sorted(Comparator.comparing(Map.Entry<String, Integer>::getValue).reversed())
-                            .forEach(entry -> System.out.println(entry.getKey()));
+            Map<String, Integer> artistUWordsNum = artistsUWords.entrySet().stream()
+                                                                .collect(Collectors.toMap(Map.Entry::getKey,
+                                                                         entry -> entry.getValue().size()));
+
+            artistUWordsNum.entrySet().stream()
+                                      .sorted(Comparator.comparing(Map.Entry<String, Integer>::getValue).reversed())
+                                      .forEach(entry -> System.out.println(entry.getKey()));
+        }
+
+        if(similarArtistName != null) {                                                    // --similar_artists
+            DBService dbService = new DBService(filename);
+            Map<String, Set<String>> artistsUWords = dbService.getArtistsUniqueWords();
+
+            artistsUWords.entrySet().stream()
+                                    .peek(entry -> entry.getValue().retainAll(artistsUWords.get(similarArtistName)))
+                                    .map(entry -> new AbstractMap.SimpleEntry<String, Integer>(entry.getKey(),
+                                                                                               entry.getValue().size()))
+                                    .sorted(Comparator.comparing(Map.Entry<String, Integer>::getValue).reversed())
+                                    .skip(1)
+                                    .forEach(entry -> System.out.println(entry.getKey() + " - " + entry.getValue()));
         }
     }
 }
