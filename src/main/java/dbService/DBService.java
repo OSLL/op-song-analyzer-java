@@ -128,10 +128,7 @@ public class DBService {
                         else data.put(stem, data.get(stem) + 1);
                     }
                 }
-
             }
-
-            System.out.print('\r');
 
             if(data.isEmpty()) {
                 switch (typedStr.getType()) {
@@ -154,7 +151,7 @@ public class DBService {
         return data;
     }
 
-    public Map<String, Set<String>> getArtistsUniqueWords() {
+    public Map<String, Set<String>> getUniqueWords(int source) {
         CSVReader reader = null;
 
         try {
@@ -175,8 +172,8 @@ public class DBService {
 
                 pb.step();                                                             // progressBar step++
 
-                if(data.containsKey(nextLine[ARTIST])) {
-                    Set<String> uniqueWords = data.get(nextLine[ARTIST]);
+                if(data.containsKey(nextLine[source])) {
+                    Set<String> uniqueWords = data.get(nextLine[source]);
                     String[] words = nextLine[LYRICS].toLowerCase()
                             .trim()
                             .replaceAll("[^a-zA-Z ]", "")
@@ -186,7 +183,7 @@ public class DBService {
                         uniqueWords.add(stemmer.getStem(word));
                     }
 
-                    data.put(nextLine[ARTIST], uniqueWords);
+                    data.put(nextLine[source], uniqueWords);
 
                 } else {
 
@@ -200,7 +197,7 @@ public class DBService {
                         uniqueWords.add(stemmer.getStem(word));
                     }
 
-                    data.put(nextLine[ARTIST], uniqueWords);
+                    data.put(nextLine[source], uniqueWords);
                 }
             }
 

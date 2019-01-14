@@ -52,6 +52,12 @@ public class ArgsHandler implements Runnable {
                   "with the name \"NAME\".")
     private String similarArtistName = null;
 
+    @CommandLine.Option(names = "--similar_songs",                                         // --similar_songs
+            paramLabel = "NAME",
+            description = "List of songs than the vocabulary intersects with the vocabulary of the song" +
+                    "with the name \"NAME\".")
+    private String similarSongName = null;
+
     public static final int ARTIST = 0;
     public static final int SONG = 1;
     public static final int LYRICS = 3;
@@ -63,6 +69,7 @@ public class ArgsHandler implements Runnable {
 
         if(artistSubstr != null) {                                                         // --list_bands
             DBService dbService = new DBService(filename);
+
             Map<String,Integer> artists = dbService.getNames(new TypedStr(ARTIST, artistSubstr));
 
             artists.keySet().stream()
@@ -100,7 +107,7 @@ public class ArgsHandler implements Runnable {
 
         if(artistWordRating) {                                                             // --artist_word_rating
             DBService dbService = new DBService(filename);
-            Map<String, Set<String>> artistsUWords = dbService.getArtistsUniqueWords();
+            Map<String, Set<String>> artistsUWords = dbService.getUniqueWords(ARTIST);
 
             Map<String, Integer> artistUWordsNum = artistsUWords.entrySet().stream()
                                                                 .collect(Collectors.toMap(Map.Entry::getKey,
@@ -113,15 +120,40 @@ public class ArgsHandler implements Runnable {
 
         if(similarArtistName != null) {                                                    // --similar_artists
             DBService dbService = new DBService(filename);
-            Map<String, Set<String>> artistsUWords = dbService.getArtistsUniqueWords();
+            Map<String, Set<String>> artistsUWords = dbService.getUniqueWords(ARTIST);
+
+            if(!artistsUWords.containsKey(similarArtistName)) {
+                System.out.println("Artist \"" + similarArtistName + "\" not found.");
+                System.exit(1);
+            }
 
             artistsUWords.entrySet().stream()
                                     .peek(entry -> entry.getValue().retainAll(artistsUWords.get(similarArtistName)))
                                     .map(entry -> new AbstractMap.SimpleEntry<String, Integer>(entry.getKey(),
                                                                                                entry.getValue().size()))
+                                    .filter(entry -> entry.getValue() != 0)
                                     .sorted(Comparator.comparing(Map.Entry<String, Integer>::getValue).reversed())
                                     .skip(1)
                                     .forEach(entry -> System.out.println(entry.getKey() + " - " + entry.getValue()));
+        }
+
+        if(similarSongName != null) {                                                    // --similar_artists
+            DBService dbService = new DBService(filename);
+            Map<String, Set<String>> songsUWords = dbService.getUniqueWords(SONG);
+
+            if(!songsUWords.containsKey(similarSongName)) {
+                System.out.println("Song \"" + similarSongName + "\" not found.");
+                System.exit(1);
+            }
+
+            songsUWords.entrySet().stream()
+                                  .peek(entry -> entry.getValue().retainAll(songsUWords.get(similarSongName)))
+                                  .map(entry -> new AbstractMap.SimpleEntry<String, Integer>(entry.getKey(),
+                                                                                             entry.getValue().size()))
+                                  .filter(entry -> entry.getValue() != 0)
+                                  .sorted(Comparator.comparing(Map.Entry<String, Integer>::getValue).reversed())
+                                  .skip(1)
+                                  .forEach(entry -> System.out.println(entry.getKey() + " - " + entry.getValue()));
         }
     }
 }
