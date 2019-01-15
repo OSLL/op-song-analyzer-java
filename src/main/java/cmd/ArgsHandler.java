@@ -55,8 +55,12 @@ public class ArgsHandler implements Runnable {
     @CommandLine.Option(names = "--similar_songs",                                         // --similar_songs
             paramLabel = "NAME",
             description = "List of songs than the vocabulary intersects with the vocabulary of the song" +
-                    "with the name \"NAME\".")
+                          "with the name \"NAME\".")
     private String similarSongName = null;
+
+    @CommandLine.Option(names = "--truly_uniq_words",                                      // --truly_uniq_words
+            description = "List of words that are found only in one song.")
+    private boolean truly_uniq_words = false;
 
     public static final int ARTIST = 0;
     public static final int SONG = 1;
@@ -137,7 +141,7 @@ public class ArgsHandler implements Runnable {
                                     .forEach(entry -> System.out.println(entry.getKey() + " - " + entry.getValue()));
         }
 
-        if(similarSongName != null) {                                                    // --similar_artists
+        if(similarSongName != null) {                                                      // --similar_artists
             DBService dbService = new DBService(filename);
             Map<String, Set<String>> songsUWords = dbService.getUniqueWords(SONG);
 
@@ -154,6 +158,25 @@ public class ArgsHandler implements Runnable {
                                   .sorted(Comparator.comparing(Map.Entry<String, Integer>::getValue).reversed())
                                   .skip(1)
                                   .forEach(entry -> System.out.println(entry.getKey() + " - " + entry.getValue()));
+        }
+
+        if(truly_uniq_words) {                                                             // --truly_uniq_words
+            DBService dbService = new DBService(filename);
+            Map<String, Set<String>> songsUWords = dbService.getUniqueWords(SONG);
+
+            Map<String, Integer> result = new HashMap<>();
+
+            for(Map.Entry<String, Set<String>> entry : songsUWords.entrySet()) {
+                for(String value : entry.getValue()) {
+                    if(result.containsKey(value)) result.put(value, result.get(value) + 1);
+                    else result.put(value, 0);
+                }
+            }
+
+            result.entrySet().stream()
+                             .filter(entry -> entry.getValue() == 0)
+                             .forEach(entry -> System.out.println(entry.getKey()));
+
         }
     }
 }
