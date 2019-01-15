@@ -3,6 +3,7 @@ package cmd;
 import dbService.DBService;
 import picocli.CommandLine;
 
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -18,7 +19,7 @@ public class ArgsHandler implements Runnable {
             hidden = true,
             paramLabel = "FILENAME",
             description = "File of database. Default: \"${DEFAULT-VALUE}\".")
-    private String filename = "songlyrics\\songdata.csv";
+    private String filename = "songlyrics" + File.separatorChar + "songdata.csv";
 
     @CommandLine.Option(names = "--list_bands",                                            // --list_bands
             arity = "0..1",
@@ -88,12 +89,11 @@ public class ArgsHandler implements Runnable {
             songs.keySet().stream()
                           .sorted(Comparator.comparing(String::toLowerCase))
                           .forEach(System.out::println);
-
         }
 
         if(artistName != null) {                                                           // --artist_uniq_words
             DBService dbService = new DBService(filename);
-            Map<String, Integer> words = dbService.getUniqWords(new TypedStr(ARTIST, artistName));
+            Map<String, Integer> words = dbService.getUniqueWords(new TypedStr(ARTIST, artistName));
 
             words.entrySet().stream()
                             .sorted(Comparator.comparing(Map.Entry<String, Integer>::getValue).reversed())
@@ -102,7 +102,7 @@ public class ArgsHandler implements Runnable {
 
         if(songName != null) {                                                             // --song_uniq_words
             DBService dbService = new DBService(filename);
-            Map<String, Integer> words = dbService.getUniqWords(new TypedStr(SONG, songName));
+            Map<String, Integer> words = dbService.getUniqueWords(new TypedStr(SONG, songName));
 
             words.entrySet().stream()
                             .sorted(Comparator.comparing(Map.Entry<String, Integer>::getValue).reversed())

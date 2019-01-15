@@ -97,7 +97,7 @@ public class DBService {
         return data;
     }
 
-    public Map<String, Integer> getUniqWords(TypedStr typedStr) {
+    public Map<String, Integer> getUniqueWords(TypedStr typedStr) {
         CSVReader reader = null;
 
         try {
@@ -151,7 +151,7 @@ public class DBService {
         return data;
     }
 
-    public Map<String, Set<String>> getUniqueWords(int source) {
+    public Map<String, Set<String>> getUniqueWords(int SOURCE) {
         CSVReader reader = null;
 
         try {
@@ -172,8 +172,8 @@ public class DBService {
 
                 pb.step();                                                             // progressBar step++
 
-                if(data.containsKey(nextLine[source])) {
-                    Set<String> uniqueWords = data.get(nextLine[source]);
+                if(data.containsKey(nextLine[SOURCE])) {
+                    Set<String> uniqueWords = data.get(nextLine[SOURCE]);
                     String[] words = nextLine[LYRICS].toLowerCase()
                             .trim()
                             .replaceAll("[^a-zA-Z ]", "")
@@ -183,7 +183,7 @@ public class DBService {
                         uniqueWords.add(stemmer.getStem(word));
                     }
 
-                    data.put(nextLine[source], uniqueWords);
+                    data.put(nextLine[SOURCE], uniqueWords);
 
                 } else {
 
@@ -197,7 +197,7 @@ public class DBService {
                         uniqueWords.add(stemmer.getStem(word));
                     }
 
-                    data.put(nextLine[source], uniqueWords);
+                    data.put(nextLine[SOURCE], uniqueWords);
                 }
             }
 
