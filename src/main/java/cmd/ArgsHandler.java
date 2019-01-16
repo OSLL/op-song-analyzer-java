@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 
 @CommandLine.Command(description = "Lyrics analysis",
         name = "LyricsAnalyzer",
+        sortOptions = false,
+        usageHelpWidth = 150,
         mixinStandardHelpOptions = true,
         version = "Lyrics Analyzer 1.0")
 
@@ -69,7 +71,7 @@ public class ArgsHandler implements Runnable {
 
     public void run() {
         if(about) System.out.println("Lyrics analysis.\n" +                                // -about
-                "Author: Tsema G.S. 2018. In the course of \"Software Engineering\".\n" +
+                "Author: Tsema G.S. 2019. In the course of \"Software Engineering\".\n" +
                 "Saint-Petersburg Electrotechnical University ETU \"LETI\".");
 
         if(artistSubstr != null) {                                                         // --list_bands
@@ -124,7 +126,7 @@ public class ArgsHandler implements Runnable {
 
         if(similarArtistName != null) {                                                    // --similar_artists
             DBService dbService = new DBService(filename);
-            Map<String, Set<String>> artistsUWords = dbService.getUniqueWords(ARTIST);
+            HashMap<String, Set<String>> artistsUWords = dbService.getUniqueWords(ARTIST);
 
             if(!artistsUWords.containsKey(similarArtistName)) {
                 System.out.println("Artist \"" + similarArtistName + "\" not found.");
@@ -141,9 +143,9 @@ public class ArgsHandler implements Runnable {
                                     .forEach(entry -> System.out.println(entry.getKey() + " - " + entry.getValue()));
         }
 
-        if(similarSongName != null) {                                                      // --similar_artists
+        if(similarSongName != null) {                                                      // --similar_songs
             DBService dbService = new DBService(filename);
-            Map<String, Set<String>> songsUWords = dbService.getUniqueWords(SONG);
+            HashMap<String, Set<String>> songsUWords = dbService.getUniqueWords(SONG);
 
             if(!songsUWords.containsKey(similarSongName)) {
                 System.out.println("Song \"" + similarSongName + "\" not found.");
@@ -162,9 +164,9 @@ public class ArgsHandler implements Runnable {
 
         if(truly_uniq_words) {                                                             // --truly_uniq_words
             DBService dbService = new DBService(filename);
-            Map<String, Set<String>> songsUWords = dbService.getUniqueWords(SONG);
+            HashMap<String, Set<String>> songsUWords = dbService.getUniqueWords(SONG);
 
-            Map<String, Integer> result = new HashMap<>();
+            HashMap<String, Integer> result = new HashMap<>();
 
             for(Map.Entry<String, Set<String>> entry : songsUWords.entrySet()) {
                 for(String value : entry.getValue()) {

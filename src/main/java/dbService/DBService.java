@@ -47,17 +47,17 @@ public class DBService {
         }
     }
 
-    public Map<String, Integer> getNames(TypedStr typedStr) {
+    public HashMap<String, Integer> getNames(TypedStr typedStr) {
         CSVReader reader = null;
 
         try {
             reader = executor.getReader();
         } catch (FileNotFoundException e) {
-            System.out.println("File " + dbFile.getName() + " does not exist.");
+            System.out.println("File \"" + dbFile.getName() + "\" does not exist.");
             System.exit(1);
         }
 
-        Map<String, Integer> data = new HashMap<>();
+        HashMap<String, Integer> data = new HashMap<>();
         String[] nextLine;
 
         try(ProgressBar pb = new ProgressBar("Progress", 57650, ProgressBarStyle.ASCII)) {
@@ -78,36 +78,33 @@ public class DBService {
 
             if(data.isEmpty()) {
                 switch (typedStr.getType()) {
-                    case ARTIST: {
-                        System.out.println("Artists not found.");
-                        System.exit(1);
-                    }
-                    case SONG: {
-                        System.out.println("Songs not found.");
-                        System.exit(1);
-                    }
+                    case ARTIST: throw new DBException("Artists not found.");
+                    case SONG:   throw new DBException("Songs not found.");
                 }
             }
 
         } catch (IOException | ArrayIndexOutOfBoundsException e) {
-            System.out.println("Unable to read database file.");
+            System.out.println("\nUnable to read database file.");
+            System.exit(1);
+        } catch (DBException e) {
+            System.out.println(e.getMessage());
             System.exit(1);
         }
 
         return data;
     }
 
-    public Map<String, Integer> getUniqueWords(TypedStr typedStr) {
+    public HashMap<String, Integer> getUniqueWords(TypedStr typedStr) {
         CSVReader reader = null;
 
         try {
             reader = executor.getReader();
         } catch (FileNotFoundException e) {
-            System.out.println("File " + dbFile.getName() + " does not exist.");
+            System.out.println("File \"" + dbFile.getName() + "\" does not exist.");
             System.exit(1);
         }
 
-        Map<String, Integer> data = new HashMap<>();
+        HashMap<String, Integer> data = new HashMap<>();
         PorterStemmer stemmer = new PorterStemmer();
         String[] nextLine;
 
@@ -132,36 +129,33 @@ public class DBService {
 
             if(data.isEmpty()) {
                 switch (typedStr.getType()) {
-                    case ARTIST: {
-                        System.out.println("Artist not found.");
-                        System.exit(1);
-                    }
-                    case SONG: {
-                        System.out.println("Song not found.");
-                        System.exit(1);
-                    }
+                    case ARTIST: throw new DBException("Artist not found.");
+                    case SONG:   throw new DBException("Song not found.");
                 }
             }
 
         } catch (IOException | ArrayIndexOutOfBoundsException e) {
-            System.out.println("Unable to read database file.");
+            System.out.println("\nUnable to read database file.");
+            System.exit(1);
+        } catch (DBException e) {
+            System.out.println(e.getMessage());
             System.exit(1);
         }
 
         return data;
     }
 
-    public Map<String, Set<String>> getUniqueWords(int SOURCE) {
+    public HashMap<String, Set<String>> getUniqueWords(int SOURCE) {
         CSVReader reader = null;
 
         try {
             reader = executor.getReader();
         } catch (FileNotFoundException e) {
-            System.out.println("File " + dbFile.getName() + " does not exist.");
+            System.out.println("File \"" + dbFile.getName() + "\" does not exist.");
             System.exit(1);
         }
 
-        Map<String, Set<String>> data = new HashMap<>();
+        HashMap<String, Set<String>> data = new HashMap<>();
         PorterStemmer stemmer = new PorterStemmer();
         String[] nextLine;
 
@@ -202,12 +196,14 @@ public class DBService {
             }
 
             if(data.isEmpty()) {
-                System.out.println("Artists and songs not found.");
-                System.exit(1);
+                throw new DBException("Unknown error. Maybe something is wrong with the database file...");
             }
 
         } catch (IOException | ArrayIndexOutOfBoundsException e) {
-            System.out.println("Unable to read database file.");
+            System.out.println("\nUnable to read database file.");
+            System.exit(1);
+        } catch (DBException e) {
+            System.out.println(e.getMessage());
             System.exit(1);
         }
 
