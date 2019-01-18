@@ -2,10 +2,7 @@ package dbService;
 
 import java.io.File;
 
-import java.util.Set;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -47,7 +44,7 @@ public class DBService {
         }
     }
 
-    public HashMap<String, Integer> getNames(TypedStr typedStr) {
+    public TreeSet<String> getNames(TypedStr typedStr) {
         CSVReader reader = null;
 
         try {
@@ -57,7 +54,7 @@ public class DBService {
             System.exit(1);
         }
 
-        HashMap<String, Integer> data = new HashMap<>();
+        TreeSet<String> data = new TreeSet<>();
         String[] nextLine;
 
         try(ProgressBar pb = new ProgressBar("Progress", 57650, ProgressBarStyle.ASCII)) {
@@ -67,12 +64,7 @@ public class DBService {
                 pb.step();
 
                 if(nextLine[typedStr.getType()].toLowerCase().contains(typedStr.getSubstr().toLowerCase())) {
-                    if(!data.containsKey(nextLine[typedStr.getType()])) {
-                        data.put(nextLine[typedStr.getType()], 1);
-                    } else {
-                        int i = data.get(nextLine[typedStr.getType()]);
-                        data.put(nextLine[typedStr.getType()], ++i);
-                    }
+                    data.add(nextLine[typedStr.getType()]);
                 }
             }
 
@@ -94,7 +86,7 @@ public class DBService {
         return data;
     }
 
-    public HashMap<String, Integer> getUniqueWords(TypedStr typedStr) {
+    public Map<String, Integer> getUniqueWords(TypedStr typedStr) {
         CSVReader reader = null;
 
         try {
@@ -104,7 +96,7 @@ public class DBService {
             System.exit(1);
         }
 
-        HashMap<String, Integer> data = new HashMap<>();
+        Map<String, Integer> data = new TreeMap<>();
         PorterStemmer stemmer = new PorterStemmer();
         String[] nextLine;
 
