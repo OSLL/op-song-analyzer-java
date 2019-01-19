@@ -22,34 +22,64 @@ public class ArgsHandler {
                 "Saint-Petersburg Electrotechnical University ETU \"LETI\".");
     }
 
-    public TreeSet<String> getListBands(String artistSubstr) {                                   // --list_bands
-        return dbService.getNames(new TypedStr(ARTIST, artistSubstr));
+    public LinkedHashSet<String> getListBands(String artistSubstr) {                                   // --list_bands
+        LinkedHashSet<String> listBands = new LinkedHashSet<>();
+        dbService.getNames(new TypedStr(ARTIST, artistSubstr)).stream()
+                                                              .sorted(Comparator.comparing(String::toLowerCase))
+                                                              .forEach(listBands::add);
+        return listBands;
     }
 
-    public TreeSet<String> getListSongs(String songSubstr) {                                     // --list_songs
-        return dbService.getNames(new TypedStr(SONG, songSubstr));
+    public LinkedHashSet<String> getListSongs(String songSubstr) {                                     // --list_songs
+        LinkedHashSet<String> listBands = new LinkedHashSet<>();
+        dbService.getNames(new TypedStr(SONG, songSubstr)).stream()
+                .sorted(Comparator.comparing(String::toLowerCase))
+                .forEach(listBands::add);
+        return listBands;
     }
 
     public Set<String> getArtistUniqWords(String artistName) {                                   // --artist_uniq_words
-        Map<String, Integer> artistUWords = dbService.getUniqueWords(new TypedStr(ARTIST, artistName));
-        return artistUWords.keySet(); //<----сортировать!
+        LinkedHashSet<String> artistUWords = new LinkedHashSet<>();
+
+        Map<String, Integer> uWordsToFreq = dbService.getUniqueWordsToFreq(new TypedStr(ARTIST, artistName));
+
+        uWordsToFreq.entrySet().stream()
+                               .sorted(Comparator.comparing(Map.Entry<String, Integer>::getValue).reversed())
+                               .forEach(entry -> artistUWords.add(entry.getKey()));
+
+        return artistUWords;
     }
 
     public Set<String> getSongUniqWords(String songName) {                                       // --song_uniq_words
-        Map<String, Integer> songUWords = dbService.getUniqueWords(new TypedStr(SONG, songName));
-        return songUWords.keySet(); //<----сортировать!
+        LinkedHashSet<String> songUWords = new LinkedHashSet<>();
+
+        Map<String, Integer> uWordsToFreq = dbService.getUniqueWordsToFreq(new TypedStr(SONG, songName));
+
+        uWordsToFreq.entrySet().stream()
+                               .sorted(Comparator.comparing(Map.Entry<String, Integer>::getValue).reversed())
+                               .forEach(entry -> songUWords.add(entry.getKey()));
+
+        return songUWords;
     }
 
     public Set<String> getArtistWordRating() {                                                   // --artist_word_rating
+        LinkedHashSet<String> artistWordRating = new LinkedHashSet<>();
+
         Map<String, Set<String>> artistsUWords = dbService.getUniqueWords(ARTIST);
 
-        Map<String, Integer> artistUWordsNum = artistsUWords.entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey,
-                        entry -> entry.getValue().size()));
-        return artistUWordsNum.keySet(); //<----сортировать!
+        Map<String, Integer> artistUWordsNum = artistsUWords.entrySet()
+                                                            .stream()
+                                                            .collect(Collectors.toMap(Map.Entry::getKey,
+                                                                                      entry -> entry.getValue().size()));
+
+        artistUWordsNum.entrySet().stream()
+                                  .sorted(Comparator.comparing(Map.Entry<String, Integer>::getValue).reversed())
+                                  .forEach(entry -> artistWordRating.add(entry.getKey()));
+
+        return artistWordRating;
     }
 
-    public Map<String, Integer> getSimilarArtists(String similarArtistName) {                    // --similar_artists
+    public Map<String, Integer> getSimilarArtists(String similarArtistName) {                    // --similar_artists 19.01
         HashMap<String, Set<String>> artistsUWords = dbService.getUniqueWords(ARTIST);
 
         if (!artistsUWords.containsKey(similarArtistName)) {

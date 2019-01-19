@@ -4,6 +4,7 @@ import cmd.ArgsHandler;
 import cmd.Arguments;
 import picocli.CommandLine;
 
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -19,14 +20,14 @@ public class Main {
         if(arguments.isAbout()) { argsHandler.printAbout(); }
 
         if(arguments.getArtistSubstr() != null) {
-            TreeSet<String> listBands = argsHandler.getListBands(arguments.getArtistSubstr());
+            LinkedHashSet<String> listBands = argsHandler.getListBands(arguments.getArtistSubstr());
             listBands.stream().forEach(System.out::println);
         }
 
         if(arguments.getSongSubstr() != null) {
-            TreeSet<String> listSongs = argsHandler.getListSongs(arguments.getSongSubstr());
+            LinkedHashSet<String> listSongs = argsHandler.getListSongs(arguments.getSongSubstr());
             listSongs.stream().forEach(System.out::println);
-    }
+        }
 
         if(arguments.getArtistName() != null) {
             Set<String> artistUnuqWords = argsHandler.getArtistUniqWords(arguments.getArtistName());

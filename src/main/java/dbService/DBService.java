@@ -44,7 +44,7 @@ public class DBService {
         }
     }
 
-    public TreeSet<String> getNames(TypedStr typedStr) {
+    public Set<String> getNames(TypedStr typedStr) {
         CSVReader reader = null;
 
         try {
@@ -54,7 +54,7 @@ public class DBService {
             System.exit(1);
         }
 
-        TreeSet<String> data = new TreeSet<>();
+        HashSet<String> data = new HashSet<>();
         String[] nextLine;
 
         try(ProgressBar pb = new ProgressBar("Progress", 57650, ProgressBarStyle.ASCII)) {
@@ -86,7 +86,7 @@ public class DBService {
         return data;
     }
 
-    public Map<String, Integer> getUniqueWords(TypedStr typedStr) {
+    public Map<String, Integer> getUniqueWordsToFreq(TypedStr typedStr) {
         CSVReader reader = null;
 
         try {
