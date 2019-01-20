@@ -4,10 +4,7 @@ import cmd.ArgsHandler;
 import cmd.Arguments;
 import picocli.CommandLine;
 
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -30,27 +27,27 @@ public class Main {
         }
 
         if(arguments.getArtistName() != null) {
-            Set<String> artistUnuqWords = argsHandler.getArtistUniqWords(arguments.getArtistName());
+            LinkedHashSet<String> artistUnuqWords = argsHandler.getArtistUniqWords(arguments.getArtistName());
             artistUnuqWords.stream().forEach(System.out::println);
         }
 
         if(arguments.getSongName() != null) {
-            Set<String> songUnuqWords = argsHandler.getSongUniqWords(arguments.getSongName());
+            LinkedHashSet<String> songUnuqWords = argsHandler.getSongUniqWords(arguments.getSongName());
             songUnuqWords.stream().forEach(System.out::println);
         }
 
         if(arguments.isArtistWordRating()) {
-            Set<String> artistWordRating = argsHandler.getArtistWordRating();
+            LinkedHashSet<String> artistWordRating = argsHandler.getArtistWordRating();
             artistWordRating.stream().forEach(System.out::println);
         }
 
         if(arguments.getSimilarArtistName() != null) {
-            Map<String, Integer> similarArtists = argsHandler.getSimilarArtists(arguments.getSimilarArtistName());
+            LinkedHashMap<String, Integer> similarArtists = argsHandler.getSimilarArtists(arguments.getSimilarArtistName());
             similarArtists.entrySet().stream().forEach(System.out::println);
         }
 
         if(arguments.getSimilarSongName() != null) {
-            Map<String, Integer> similarSongs = argsHandler.getSimilarSongs(arguments.getSimilarSongName());
+            LinkedHashMap<String, Integer> similarSongs = argsHandler.getSimilarSongs(arguments.getSimilarSongName());
             similarSongs.entrySet().stream().forEach(System.out::println);
         }
 

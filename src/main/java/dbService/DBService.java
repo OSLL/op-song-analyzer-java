@@ -137,7 +137,7 @@ public class DBService {
         return data;
     }
 
-    public HashMap<String, Set<String>> getUniqueWords(int SOURCE) {
+    public Map<String, Set<String>> getUniqueWords(int SOURCE) {
         CSVReader reader = null;
 
         try {
