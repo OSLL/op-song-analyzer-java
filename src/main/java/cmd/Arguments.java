@@ -9,7 +9,6 @@ import java.io.File;
         usageHelpWidth = 150,
         mixinStandardHelpOptions = true,
         version = "Lyrics Analyzer 1.0")
-
 public class Arguments {
     @CommandLine.Option(names = "-about") private boolean about = false;                   // -about
     public boolean isAbout() { return about; }

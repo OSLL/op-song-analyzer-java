@@ -11,8 +11,23 @@ public class Main {
 
         Arguments arguments = new Arguments();
         ArgsHandler argsHandler = new ArgsHandler(arguments.getFilename());
+        try {
+            CommandLine commandLine = new CommandLine(arguments);
+            commandLine.parse(args);
 
-        CommandLine.populateCommand(arguments, args);
+            if (commandLine.isUsageHelpRequested()) {
+                commandLine.usage(System.out);
+                return;
+            } else if (commandLine.isVersionHelpRequested()) {
+                commandLine.printVersionHelp(System.out);
+                return;
+            }
+        } catch (CommandLine.ParameterException e) {
+            System.out.println(e.getMessage());
+            CommandLine.usage(arguments, System.out);
+            return;
+        }
+
 
         if(arguments.isAbout()) { argsHandler.printAbout(); }
 
