@@ -17,8 +17,8 @@ public class Arguments {
             hidden = true,
             paramLabel = "FILENAME",
             description = "File of database. Default: \"${DEFAULT-VALUE}\".")
-    private String filename = "songlyrics" + File.separatorChar + "songdata.csv";
-    public String getFilename() { return filename; }
+    private String filePath = "songlyrics" + File.separatorChar + "songdata.csv";
+    public String getFilePath() { return filePath; }
 
     @CommandLine.Option(names = "--list_bands",                                            // --list_bands
             arity = "0..1",

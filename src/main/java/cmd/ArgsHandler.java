@@ -12,8 +12,8 @@ public class ArgsHandler {
     public static final int SONG = 1;
     public static final int LYRICS = 3;
 
-    public ArgsHandler(String filename) {
-        dbService = new DBService(filename);
+    public ArgsHandler(DBService dbService) {
+        this.dbService = dbService;
     }
 
     public void printAbout() {
@@ -65,7 +65,7 @@ public class ArgsHandler {
     public LinkedHashSet<String> getArtistWordRating() {                                                   // --artist_word_rating
         LinkedHashSet<String> artistWordRating = new LinkedHashSet<>();
 
-        dbService.getUniqueWords(ARTIST)
+        dbService.getNameToUniqueWords(ARTIST)
                  .entrySet()
                  .stream()
                  .map(entry -> new AbstractMap.SimpleEntry<String, Integer>(entry.getKey(),
@@ -78,50 +78,50 @@ public class ArgsHandler {
 
     public LinkedHashMap<String, Integer> getSimilarArtists(String similarArtistName) {                    // --similar_artists 19.01
         LinkedHashMap<String, Integer> artistsToCommonWordsNum = new LinkedHashMap<>();
-        Map<String, Set<String>> artistsUWords = dbService.getUniqueWords(ARTIST);
+        Map<String, Set<String>> artistToUWords = dbService.getNameToUniqueWords(ARTIST);
 
-        if (!artistsUWords.containsKey(similarArtistName)) {
+        if (!artistToUWords.containsKey(similarArtistName)) {
             System.out.println("Artist \"" + similarArtistName + "\" not found.");
             System.exit(1);
         }
 
-        artistsUWords.entrySet().stream()
-                                .peek(entry -> entry.getValue().retainAll(artistsUWords.get(similarArtistName)))
-                                .map(entry -> new AbstractMap.SimpleEntry<String, Integer>(entry.getKey(),
-                                     entry.getValue().size()))
-                                .filter(entry -> entry.getValue() != 0)
-                                .sorted(Comparator.comparing(Map.Entry<String, Integer>::getValue).reversed())
-                                .skip(1)
-                                .forEach(entry -> artistsToCommonWordsNum.put(entry.getKey(), entry.getValue()));
+        artistToUWords.entrySet().stream()
+                                 .peek(entry -> entry.getValue().retainAll(artistToUWords.get(similarArtistName)))
+                                 .map(entry -> new AbstractMap.SimpleEntry<String, Integer>(entry.getKey(),
+                                      entry.getValue().size()))
+                                 .filter(entry -> entry.getValue() != 0)
+                                 .sorted(Comparator.comparing(Map.Entry<String, Integer>::getValue).reversed())
+                                 .skip(1)
+                                 .forEach(entry -> artistsToCommonWordsNum.put(entry.getKey(), entry.getValue()));
 
         return artistsToCommonWordsNum;
     }
 
     public LinkedHashMap<String, Integer> getSimilarSongs(String similarSongName) {                  // --similar_songs
-        LinkedHashMap<String, Integer> songsToCommonWordsNum = new LinkedHashMap<>();
-        Map<String, Set<String>> songsUWords = dbService.getUniqueWords(SONG);
+        LinkedHashMap<String, Integer> songToCommonWordsNum = new LinkedHashMap<>();
+        Map<String, Set<String>> songToUWords = dbService.getNameToUniqueWords(SONG);
 
-        if (!songsUWords.containsKey(similarSongName)) {
+        if (!songToUWords.containsKey(similarSongName)) {
             System.out.println("Artist \"" + similarSongName + "\" not found.");
             System.exit(1);
         }
 
-        songsUWords.entrySet().stream()
-                .peek(entry -> entry.getValue().retainAll(songsUWords.get(similarSongName)))
-                .map(entry -> new AbstractMap.SimpleEntry<String, Integer>(entry.getKey(),
-                                                                           entry.getValue().size()))
-                .filter(entry -> entry.getValue() != 0)
-                .sorted(Comparator.comparing(Map.Entry<String, Integer>::getValue).reversed())
-                .skip(1)
-                .forEach(entry -> songsToCommonWordsNum.put(entry.getKey(), entry.getValue()));
+        songToUWords.entrySet().stream()
+                    .peek(entry -> entry.getValue().retainAll(songToUWords.get(similarSongName)))
+                    .map(entry -> new AbstractMap.SimpleEntry<String, Integer>(entry.getKey(),
+                                                                               entry.getValue().size()))
+                    .filter(entry -> entry.getValue() != 0)
+                    .sorted(Comparator.comparing(Map.Entry<String, Integer>::getValue).reversed())
+                    .skip(1)
+                    .forEach(entry -> songToCommonWordsNum.put(entry.getKey(), entry.getValue()));
 
-        return songsToCommonWordsNum;
+        return songToCommonWordsNum;
     }
 
     public Set<String> getTrulyUniqWords() {                                            // --truly_uniq_words
         Map<String, Integer> songUWordsToNum = new HashMap<>();
 
-        dbService.getUniqueWords(SONG).entrySet().forEach(entry -> {
+        dbService.getNameToUniqueWords(SONG).entrySet().forEach(entry -> {
                                                      for(String word : entry.getValue()) {
                                                          if(songUWordsToNum.containsKey(word))
                                                              songUWordsToNum.put(word, songUWordsToNum.get(word) + 1);

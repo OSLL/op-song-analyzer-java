@@ -1,14 +1,8 @@
 package dbService;
 
-import java.io.File;
-
 import java.util.*;
-
-import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import com.opencsv.CSVReader;
-
 import cmd.TypedStr;
 import me.tongfei.progressbar.ProgressBar;
 import me.tongfei.progressbar.ProgressBarStyle;
@@ -20,39 +14,13 @@ import static cmd.ArgsHandler.SONG;
 
 public class DBService {
 
-    private final File dbFile;
-    private Executor executor;
+    private CSVReader reader;
 
-    public DBService(String dbFilePath) {
-        dbFile = new File(dbFilePath);
-        checkFile();
-        executor = new Executor(dbFile);
-    }
-
-    private void checkFile() {
-        if(!dbFile.exists()) {                                                      // Файл существует
-            System.out.println("Database file " + dbFile.getName() + " does not exist.");
-            System.exit(1);
-        }
-        if(!dbFile.getName().endsWith(".csv")) {                                    // Расширение *.csv
-            System.out.println("Database file must have *.csv-extension.");
-            System.exit(1);
-        }
-        if(!dbFile.isFile() && !dbFile.canRead()) {                                 // Можно прочесть
-            System.out.println("Unable to read database file.");
-            System.exit(1);
-        }
+    public DBService(CSVReader reader) {
+        this.reader = reader;
     }
 
     public Set<String> getNames(TypedStr typedStr) {
-        CSVReader reader = null;
-
-        try {
-            reader = executor.getReader();
-        } catch (FileNotFoundException e) {
-            System.out.println("File \"" + dbFile.getName() + "\" does not exist.");
-            System.exit(1);
-        }
 
         HashSet<String> data = new HashSet<>();
         String[] nextLine;
@@ -87,14 +55,6 @@ public class DBService {
     }
 
     public Map<String, Integer> getUniqueWordsToFreq(TypedStr typedStr) {
-        CSVReader reader = null;
-
-        try {
-            reader = executor.getReader();
-        } catch (FileNotFoundException e) {
-            System.out.println("File \"" + dbFile.getName() + "\" does not exist.");
-            System.exit(1);
-        }
 
         Map<String, Integer> data = new TreeMap<>();
         PorterStemmer stemmer = new PorterStemmer();
@@ -137,15 +97,7 @@ public class DBService {
         return data;
     }
 
-    public Map<String, Set<String>> getUniqueWords(int SOURCE) {
-        CSVReader reader = null;
-
-        try {
-            reader = executor.getReader();
-        } catch (FileNotFoundException e) {
-            System.out.println("File \"" + dbFile.getName() + "\" does not exist.");
-            System.exit(1);
-        }
+    public Map<String, Set<String>> getNameToUniqueWords(int SOURCE) {
 
         HashMap<String, Set<String>> data = new HashMap<>();
         PorterStemmer stemmer = new PorterStemmer();
