@@ -10,9 +10,6 @@ import java.io.File;
         mixinStandardHelpOptions = true,
         version = "Lyrics Analyzer 1.0")
 public class Arguments {
-    @CommandLine.Option(names = "-about") private boolean about = false;                   // -about
-    public boolean isAbout() { return about; }
-
     @CommandLine.Option(names = "--file",                                                  // --file
             hidden = true,
             paramLabel = "FILENAME",
@@ -69,4 +66,7 @@ public class Arguments {
             description = "List of words that are found only in one song.")
     private boolean truly_uniq_words = false;
     public boolean isTrulyUniqWords() { return truly_uniq_words; }
+
+    @CommandLine.Option(names = "--about") private boolean about = false;                   // -about
+    public boolean isAbout() { return about; }
 }

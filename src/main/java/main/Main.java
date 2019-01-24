@@ -1,17 +1,26 @@
 package main;
 
 import cmd.ArgsHandler;
+import cmd.ArgsHandlerException;
 import cmd.Arguments;
 import dbService.CSVExecutor;
+import dbService.DBException;
 import dbService.DBService;
+import dbService.ExecutorExeption;
 import picocli.CommandLine;
 
+import java.io.IOException;
 import java.util.*;
+import java.util.logging.LogManager;
 
 public class Main {
     public static void main(String[] args) {
         Arguments arguments = new Arguments();
+
         try {
+            LogManager.getLogManager().readConfiguration(
+                    Main.class.getResourceAsStream("/logging.properties"));
+
             CommandLine commandLine = new CommandLine(arguments);
             commandLine.parse(args);
 
@@ -77,6 +86,14 @@ public class Main {
             System.out.println(e.getMessage());
             CommandLine.usage(arguments, System.out);
             return;
+        } catch (ExecutorExeption | DBException e) {
+            System.out.println(e.getMessage());
+            System.exit(1);
+        } catch (IOException e) {
+            System.err.println("Could not setup logger configuration: " + e.toString());
+        } catch (ArgsHandlerException e) {
+            System.out.println(e.getMessage());
+            System.exit(1);
         }
     }
 }
