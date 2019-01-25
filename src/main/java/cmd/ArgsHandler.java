@@ -7,9 +7,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class ArgsHandler {
-
     private static Logger log = Logger.getLogger(DBService.class.getName());
-
     private DBService dbService;
 
     public static final int ARTIST = 0;
