@@ -4,12 +4,12 @@ import cmd.TypedStr;
 import com.opencsv.CSVReader;
 import org.junit.Test;
 
-
 import java.io.IOException;
 import java.util.*;
 
 import static cmd.ArgsHandler.ARTIST;
 import static cmd.ArgsHandler.SONG;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

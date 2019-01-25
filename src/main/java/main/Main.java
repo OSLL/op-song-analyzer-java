@@ -10,7 +10,12 @@ import dbService.DBService;
 import dbService.ExecutorExeption;
 
 import picocli.CommandLine;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.*;
+import java.util.logging.LogManager;
 
 public class Main {
     public static void main(String[] args) {
@@ -18,6 +23,8 @@ public class Main {
         Arguments arguments = new Arguments();
 
         try {
+            LogManager.getLogManager().readConfiguration(new FileInputStream("resources/logging.properties"));
+
             CommandLine commandLine = new CommandLine(arguments);
             commandLine.parse(args);
 
@@ -61,12 +68,14 @@ public class Main {
             }
 
             else if(arguments.getSimilarArtistName() != null) {
-                LinkedHashMap<String, Integer> similarArtists = argsHandler.getSimilarArtists(arguments.getSimilarArtistName());
+                LinkedHashMap<String, Integer> similarArtists = argsHandler.getSimilarArtists(
+                                                                                    arguments.getSimilarArtistName());
                 similarArtists.entrySet().forEach(System.out::println);
             }
 
             else if(arguments.getSimilarSongName() != null) {
-                LinkedHashMap<String, Integer> similarSongs = argsHandler.getSimilarSongs(arguments.getSimilarSongName());
+                LinkedHashMap<String, Integer> similarSongs = argsHandler.getSimilarSongs(
+                                                                                    arguments.getSimilarSongName());
                 similarSongs.entrySet().forEach(System.out::println);
             }
 
@@ -85,6 +94,8 @@ public class Main {
         } catch (ExecutorExeption | DBException | ArgsHandlerException e) {
             System.out.println(e.getMessage());
             System.exit(1);
+        } catch (IOException e) {
+            System.err.println("Could not setup logger configuration: " + e.toString());
         }
     }
 }
