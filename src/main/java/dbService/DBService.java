@@ -31,7 +31,6 @@ public class DBService {
         String[] nextLine;
 
         try(ProgressBar pb = new ProgressBar("Progress", 57650, ProgressBarStyle.ASCII)) {
-            int count = 0;
             while ((nextLine = reader.readNext()) != null) {
                 pb.step();
 
@@ -70,7 +69,6 @@ public class DBService {
 
         try(ProgressBar pb = new ProgressBar("Progress", 57650, ProgressBarStyle.ASCII)) {
             while ((nextLine = reader.readNext()) != null) {
-
                 pb.step();
 
                 if(nextLine.length != 4) {
@@ -126,10 +124,8 @@ public class DBService {
         String[] nextLine;
 
         try(ProgressBar pb = new ProgressBar("Progress", 57650, ProgressBarStyle.ASCII)) {
-
             while ((nextLine = reader.readNext()) != null) {
-
-                pb.step();                                                             // progressBar step++
+                pb.step();
 
                 if(nextLine.length != 4) {
                     log.info("Database Integrity corruption detected! Bad entry will be skipped.");
